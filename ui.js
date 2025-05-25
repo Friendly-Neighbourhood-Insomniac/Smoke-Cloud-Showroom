@@ -11,11 +11,13 @@ const muteButton = document.getElementById('mute-button');
 const loadingProgressElement = document.getElementById('loading-progress');
 const controlInstructionsTextElement = document.getElementById('control-instructions-text');
 const touchControlsElement = document.getElementById('touch-controls');
+const audioControls = document.getElementById('audio-controls');
 
 let closeInfoPanelCallback = null;
 let startExperienceCallback = null;
 let toggleMuteCallback = null;
 let isMuted = false;
+let playMusicCallback = null;
 
 export function initInfoPanel(callback) {
     closeInfoPanelCallback = callback;
@@ -51,11 +53,26 @@ export function initWelcomeScreen(callback) {
 export function initAudioControls(callback) {
     toggleMuteCallback = callback;
     if (muteButton) {
+        if (isMobileDevice()) {
+            muteButton.style.display = 'none';
+            muteButton.textContent = 'Play Music to Enhance Vibes';
+            muteButton.classList.add('play-music');
+        }
+
         muteButton.addEventListener('click', () => {
+            if (isMobileDevice() && muteButton.classList.contains('play-music')) {
+                muteButton.classList.remove('play-music');
+                muteButton.textContent = 'Mute';
+                isMuted = false;
+            } else {
             isMuted = !isMuted;
+            }
             setMuteButtonState(isMuted);
             if (toggleMuteCallback) {
                 toggleMuteCallback(isMuted);
+            }
+            if (isMobileDevice()) {
+                muteButton.style.display = 'block';
             }
         });
     }

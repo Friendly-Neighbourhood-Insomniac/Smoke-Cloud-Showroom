@@ -193,6 +193,18 @@
             transform: translateY(-1px);
             box-shadow: 0 4px 8px rgba(0,0,0,0.2);
         }
+        #mute-button.play-music {
+            background-color: #FF007A;
+            border-color: #FF007A;
+            padding: clamp(12px, 3vw, 15px) clamp(25px, 6vw, 30px);
+            font-size: clamp(1rem, 4vw, 1.2rem);
+            animation: pulse 2s infinite;
+        }
+        @keyframes pulse {
+            0% { transform: scale(1); }
+            50% { transform: scale(1.05); }
+            100% { transform: scale(1); }
+        }
         
         /* Touch controls overlay */
         #touch-controls {

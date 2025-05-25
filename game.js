@@ -130,11 +130,11 @@ export class Game {
     startExperience() {
         console.log("Experience started!");
         this.experienceStarted = true;
-        if (!this.isMobile) {
+        if (!this.isMobile || (this.isMobile && this.backgroundMusic && this.backgroundMusic.isPlaying)) {
             this.firstPersonController.requestPointerLock();
         }
         
-        if (this.backgroundMusic && this.audioLoaded && !this.backgroundMusic.isPlaying) {
+        if (this.backgroundMusic && this.audioLoaded && (!this.isMobile || !this.backgroundMusic.isPlaying)) {
             this.backgroundMusic.play();
             if (this.backgroundMusic.getVolume() > 0) {
                 this.speakerAnimationActions.forEach(action => {
