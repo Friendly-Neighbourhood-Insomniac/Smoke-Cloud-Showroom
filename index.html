@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
     <title>3D Virtual Showroom</title>
     <script type="importmap">
     {
@@ -11,8 +11,7 @@
             "three/": "https://esm.sh/three@0.160.0&dev/",
             "three/addons/loaders/GLTFLoader.js": "https://esm.sh/three@0.160.0/examples/jsm/loaders/GLTFLoader.js?dev",
             "three/addons/geometries/TextGeometry.js": "https://esm.sh/three@0.160.0/examples/jsm/geometries/TextGeometry.js?dev",
-            "three/addons/loaders/FontLoader.js": "https://esm.sh/three@0.160.0/examples/jsm/loaders/FontLoader.js?dev",
-            "rosieControls": "./rosieControls.js"
+            "three/addons/loaders/FontLoader.js": "https://esm.sh/three@0.160.0/examples/jsm/loaders/FontLoader.js?dev"
         }
     }
     </script>
@@ -21,57 +20,58 @@
         canvas { display: block; }
         #interaction-prompt {
             position: absolute;
-            top: 50%; /* Center vertically */
-            left: 50%; /* Center horizontally */
-            transform: translate(-50%, -50%); /* Precise centering */
-            padding: 15px 25px; /* Increased padding */
-            background-color: rgba(20, 20, 35, 0.9); /* Dark, themed, semi-transparent background */
-            border-radius: 10px; /* Softer corners */
-            font-size: 1.1em; /* Larger font size */
-            display: none; /* Hidden by default */
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            padding: 15px 25px;
+            background-color: rgba(20, 20, 35, 0.9);
+            border-radius: 10px;
+            font-size: clamp(0.9rem, 4vw, 1.1rem);
+            display: none;
             text-align: center;
-            color: #FFFFFF; /* White text */
-            font-weight: bold; /* Bold text */
-            text-transform: uppercase; /* Uppercase text */
-            letter-spacing: 1px; /* Letter spacing */
-            border: 2px solid #FF007A; /* Vibrant pink border */
-            box-shadow: 0 0 20px rgba(255, 0, 122, 0.5); /* Pink glow shadow */
-            z-index: 90; /* Ensure it's above scene but below info panel/welcome screen */
+            color: #FFFFFF;
+            font-weight: bold;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            border: 2px solid #FF007A;
+            box-shadow: 0 0 20px rgba(255, 0, 122, 0.5);
+            z-index: 90;
+            max-width: 90vw;
         }
         #info-panel {
             position: absolute;
             top: 50%;
             left: 50%;
             transform: translate(-50%, -50%);
-            width: auto; /* Adjust width to content */
-            max-width: 90vw; /* Max width relative to viewport width */
-            max-height: 90vh; /* Max height relative to viewport height */
-            background-color: rgba(10, 10, 20, 0.85); /* Darker, slightly transparent */
-            border: 1px solid rgba(180, 180, 220, 0.6); /* Lighter border */
-            border-radius: 15px; /* More pronounced rounding */
-            padding: 15px; /* Reduced padding as image will have its own spacing */
+            width: clamp(280px, 90vw, 600px);
+            max-height: 90vh;
+            background-color: rgba(10, 10, 20, 0.85);
+            border: 1px solid rgba(180, 180, 220, 0.6);
+            border-radius: 15px;
+            padding: 15px;
             box-shadow: 0 0 30px rgba(0,0,0,0.7);
-            display: none; /* Hidden by default, will be flex when shown */
-            flex-direction: column; /* Stack close button and content */
-            align-items: center; /* Center image horizontally */
-            justify-content: center; /* Center image vertically */
+            display: none;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
             z-index: 100;
             color: #e0e0ff;
         }
-        #info-panel h2 { /* Will be hidden when showing card image */
-            display: none; 
+        #info-panel h2 {
+            display: none;
             margin-top: 0;
             color: #c0c0ff;
             border-bottom: 1px solid #7070a0;
             padding-bottom: 10px;
             width: 100%;
             text-align: center;
+            font-size: clamp(1.2rem, 5vw, 1.5rem);
         }
-        #info-panel-content { /* This div will hold the image */
+        #info-panel-content {
             width: 100%;
-            max-width: 400px; /* Max width for the card image itself */
-            max-height: calc(90vh - 60px); /* Account for padding and close button */
-            overflow: hidden; /* Ensure image fits */
+            max-width: clamp(260px, 85vw, 400px);
+            max-height: calc(90vh - 60px);
+            overflow: hidden;
             display: flex;
             justify-content: center;
             align-items: center;
@@ -79,28 +79,28 @@
         #info-panel-content img {
             display: block;
             max-width: 100%;
-            max-height: 100%; /* Ensure image scales down to fit */
-            object-fit: contain; /* Scale image to fit while maintaining aspect ratio */
-            border-radius: 8px; /* If the card images themselves don't have rounded corners */
+            max-height: 100%;
+            object-fit: contain;
+            border-radius: 8px;
         }
-        /* Ensure the text paragraph is hidden when image is shown */
-        #info-panel-content p { 
+        #info-panel-content p {
             display: none;
             line-height: 1.6;
             margin-bottom: 15px;
+            font-size: clamp(0.9rem, 4vw, 1rem);
         }
         #info-panel-close {
-            position: absolute; /* Keep absolute for corner placement */
-            top: 10px; /* Adjust position slightly */
-            right: 10px; /* Adjust position slightly */
-            background: rgba(0,0,0,0.3); /* Slight background for visibility */
+            position: absolute;
+            top: 10px;
+            right: 10px;
+            background: rgba(0,0,0,0.3);
             border: 1px solid rgba(255,255,255,0.2);
-            border-radius: 50%; /* Make it circular */
-            width: 30px; /* Fixed size */
-            height: 30px; /* Fixed size */
+            border-radius: 50%;
+            width: clamp(30px, 8vw, 40px);
+            height: clamp(30px, 8vw, 40px);
             color: #c0c0ff;
-            font-size: 20px; /* Adjust font size for new button size */
-            line-height: 28px; /* Center the 'x' */
+            font-size: clamp(20px, 5vw, 24px);
+            line-height: 28px;
             text-align: center;
             cursor: pointer;
             font-weight: bold;
@@ -116,7 +116,7 @@
             left: 0;
             width: 100vw;
             height: 100vh;
-            background-color: rgba(0, 0, 0, 0.95); /* Dark overlay */
+            background-color: rgba(0, 0, 0, 0.95);
             display: flex;
             flex-direction: column;
             align-items: center;
@@ -127,30 +127,30 @@
         }
         #welcome-screen img {
             max-width: 90%;
-            max-height: 70vh; /* Adjust as needed */
+            max-height: 70vh;
             object-fit: contain;
-            margin-bottom: 20px; /* Space between image and progress */
-            border-radius: 10px; /* Optional: if image asset isn't pre-rounded */
+            margin-bottom: 20px;
+            border-radius: 10px;
         }
         #loading-progress {
             color: #FFFFFF;
-            font-size: 1em;
+            font-size: clamp(0.9rem, 4vw, 1rem);
             margin-bottom: 20px;
             transition: opacity 0.3s ease-out;
         }
         #start-experience-button {
-            padding: 12px 28px; /* Slightly adjusted padding */
-            font-size: 1.15em; /* Slightly adjusted font size */
-            color: #FFFFFF; /* White text */
-            background-color: #FF007A; /* Vibrant pink from UI */
-            border: 2px solid #FF007A; /* Border matching background */
-            border-radius: 25px; /* Pill shape to match UI elements */
+            padding: clamp(10px, 3vw, 12px) clamp(20px, 5vw, 28px);
+            font-size: clamp(1rem, 4vw, 1.15rem);
+            color: #FFFFFF;
+            background-color: #FF007A;
+            border: 2px solid #FF007A;
+            border-radius: 25px;
             cursor: pointer;
-            box-shadow: 0 3px 6px rgba(0,0,0,0.2); /* Softer shadow */
+            box-shadow: 0 3px 6px rgba(0,0,0,0.2);
             transition: background-color 0.2s, transform 0.15s, box-shadow 0.2s, opacity 0.3s ease-out;
-            font-weight: bold; /* Bold text */
-            text-transform: uppercase; /* Uppercase text to match some UI styles */
-            letter-spacing: 1px; /* Slight letter spacing */
+            font-weight: bold;
+            text-transform: uppercase;
+            letter-spacing: 1px;
         }
         #start-experience-button:disabled {
             background-color: #555;
@@ -159,50 +159,118 @@
             opacity: 0.7;
         }
         #start-experience-button:not(:disabled):hover {
-            background-color: #E6006E; /* Darker pink on hover */
-            transform: translateY(-1px); /* Subtle lift on hover */
-            box-shadow: 0 5px 10px rgba(0,0,0,0.3); /* Enhanced shadow on hover */
+            background-color: #E6006E;
+            transform: translateY(-1px);
+            box-shadow: 0 5px 10px rgba(0,0,0,0.3);
         }
         #audio-controls {
             position: absolute;
-            top: 20px; /* Position from the top */
-            left: 50%; /* Center horizontally */
-            transform: translateX(-50%); /* Adjust for exact centering */
+            top: 20px;
+            left: 50%;
+            transform: translateX(-50%);
             display: flex;
             align-items: center;
-            background-color: transparent; /* Remove background as button will have its own */
-            padding: 0; /* No padding needed for the container */
-            border-radius: 25px; /* Match button's pill shape if desired, or remove */
-            z-index: 150; /* Ensure it's above other content */
+            background-color: transparent;
+            padding: 0;
+            border-radius: 25px;
+            z-index: 150;
         }
         #mute-button {
-            padding: 10px 25px; /* Adjusted padding for a balanced look */
-            font-size: 1em; /* Consistent font size */
+            padding: clamp(8px, 2.5vw, 10px) clamp(20px, 5vw, 25px);
+            font-size: clamp(0.9rem, 3.5vw, 1rem);
             color: #FFFFFF;
-            background-color: #FF007A; /* Vibrant pink, matching start button */
-            border: 2px solid #FF007A; /* Matching border */
-            border-radius: 25px; /* Pill shape */
+            background-color: #FF007A;
+            border: 2px solid #FF007A;
+            border-radius: 25px;
             cursor: pointer;
-            /* margin-right: 10px; Removed, as it's the only control and centered */
             transition: background-color 0.2s, transform 0.15s, box-shadow 0.2s;
             font-weight: bold;
             text-transform: uppercase;
-            letter-spacing: 0.5px; /* Slightly less letter spacing than start button */
+            letter-spacing: 0.5px;
             box-shadow: 0 2px 4px rgba(0,0,0,0.15);
         }
         #mute-button:hover {
-            background-color: #E6006E; /* Darker pink on hover */
+            background-color: #E6006E;
             transform: translateY(-1px);
             box-shadow: 0 4px 8px rgba(0,0,0,0.2);
         }
         #mute-button.muted {
-            background-color: #8c0043; /* A darker, desaturated pink for muted state */
+            background-color: #8c0043;
             border-color: #8c0043;
         }
         #mute-button.muted:hover {
-            background-color: #730037; /* Even darker for muted hover */
+            background-color: #730037;
             transform: translateY(-1px);
             box-shadow: 0 4px 8px rgba(0,0,0,0.2);
+        }
+        
+        /* Touch controls overlay */
+        #touch-controls {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            z-index: 80;
+            display: none;
+        }
+        
+        #touch-camera-area {
+            position: absolute;
+            top: 0;
+            right: 0;
+            width: 50%;
+            height: 100%;
+            pointer-events: auto;
+        }
+
+        /* Mobile interaction button */
+        #mobile-interact-button {
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            width: 60px;
+            height: 60px;
+            background-color: #FF007A;
+            border: none;
+            border-radius: 50%;
+            color: white;
+            font-size: 24px;
+            display: none;
+            justify-content: center;
+            align-items: center;
+            cursor: pointer;
+            z-index: 85;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.3);
+        }
+
+        @media (max-width: 768px) {
+            #interaction-prompt {
+                font-size: 0.9rem;
+                padding: 12px 20px;
+            }
+            
+            #info-panel {
+                width: 85vw;
+            }
+            
+            #welcome-screen img {
+                max-height: 60vh;
+            }
+        }
+
+        @media (orientation: landscape) and (max-height: 500px) {
+            #welcome-screen {
+                flex-direction: row;
+                padding: 20px;
+            }
+            
+            #welcome-screen img {
+                max-width: 50%;
+                margin-bottom: 0;
+                margin-right: 20px;
+            }
         }
     </style>
 </head>
@@ -221,13 +289,11 @@
     </div>
     <div id="audio-controls">
         <button id="mute-button">Mute</button>
-        <!-- Volume slider can be added here later -->
     </div>
+    <div id="touch-controls">
+        <div id="touch-camera-area"></div>
+    </div>
+    <button id="mobile-interact-button">E</button>
     <script type="module" src="main.js"></script>
-    <script src="https://storage.googleapis.com/rosebud_staticfiles/ScriptsLoader-Universal.js"></script>
-    <script src="https://storage.googleapis.com/rosebud_staticfiles/ChatManager.js"></script>
-    <script src="https://storage.googleapis.com/rosebud_staticfiles/ImageGenerator.js"></script>
-    <script src="https://storage.googleapis.com/rosebud_staticfiles/ProgressLogger.js"></script>
-    <script src="https://storage.googleapis.com/rosebud_staticfiles/OGP.js"></script>
 </body>
 </html>
