@@ -54,28 +54,25 @@ export function initAudioControls(callback) {
     if (muteButton) {
         if (isMobileDevice()) {
             muteButton.textContent = 'Play Music to Enhance Vibes';
-            muteButton.classList.add('play-music', 'mobile');
+            muteButton.classList.add('play-music');
             muteButton.style.cssText = `
                 position: fixed;
-                top: 20px;
-                left: 50%;
-                transform: translateX(-50%);
+                bottom: 20px;
+                left: 20px;
                 padding: 12px 20px;
                 background-color: #FF007A;
                 border: 2px solid #FF007A;
                 border-radius: 25px;
                 color: white;
                 font-size: 16px;
-                z-index: 1000;
+                z-index: 150;
                 display: block;
-                white-space: nowrap;
             `;
         }
 
         muteButton.addEventListener('click', () => {
             if (isMobileDevice() && muteButton.classList.contains('play-music')) {
                 muteButton.classList.remove('play-music');
-                muteButton.classList.remove('mobile');
                 muteButton.textContent = 'Mute';
                 muteButton.style.cssText = '';
                 isMuted = false;
