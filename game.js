@@ -131,6 +131,14 @@ export class Game {
         console.log('Setting up interactive objects...');
     }
 
+    setupVolumetricFog() {
+        // Create and add volumetric fog to the scene
+        this.volumetricFog = new VolumetricFog(this.scene, {
+            color: 0x000000,
+            density: 0.05
+        });
+    }
+
     preloadUICards() {
         // Empty method to fix the TypeError
         // Implementation can be added later if needed
