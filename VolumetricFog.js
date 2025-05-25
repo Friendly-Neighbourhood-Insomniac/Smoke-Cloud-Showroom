@@ -29,6 +29,7 @@ uniform float uTime; // Will be used for animation later
 uniform float uNoiseScale;
 uniform float uNoiseStrength;
 uniform float uNoiseAnimationSpeed;
+uniform float uCylinderHeight; // Added missing uniform declaration
 // GLSL Simplex Noise function by Stefan Gustavson
 // https://github.com/stegu/webgl-noise/blob/master/src/simplex3d.glsl
 vec3 mod289(vec3 x) {
