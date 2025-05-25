@@ -110,10 +110,11 @@ export class Game {
         const mobileInteractButton = document.getElementById('mobile-interact-button');
         mobileInteractButton.style.display = 'flex';
         mobileInteractButton.addEventListener('touchstart', (e) => {
-            e.preventDefault();
+            e.preventDefault(); 
             this.keys['KeyE'] = true;
         });
-        mobileInteractButton.addEventListener('touchend', () => {
+        mobileInteractButton.addEventListener('touchend', (e) => {
+            e.preventDefault();
             this.keys['KeyE'] = false;
         });
 
