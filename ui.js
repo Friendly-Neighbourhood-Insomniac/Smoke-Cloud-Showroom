@@ -118,10 +118,8 @@ export function disableStartButton() {
 export function showWelcomeScreen() {
     if (welcomeScreenElement) {
         const welcomeImage = welcomeScreenElement.querySelector('img');
-        if (welcomeImage) {
-            welcomeImage.src = isMobileDevice() ? 
-                '/home/project/dist/assets/mobile-UI.png' : 
-                'https://play.rosebud.ai/assets/Welcome UI.png?P0hR';
+        if (welcomeImage && isMobileDevice()) {
+            welcomeImage.src = '/assets/mobile-UI.png';
         }
         welcomeScreenElement.style.opacity = '1';
         welcomeScreenElement.style.display = 'flex';
