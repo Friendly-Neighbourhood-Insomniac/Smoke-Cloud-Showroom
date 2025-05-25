@@ -156,10 +156,11 @@
         #audio-controls {
             position: absolute;
             top: 20px;
-            left: 50%;
-            transform: translateX(-50%);
+            left: 0;
+            right: 0;
             display: flex;
             align-items: center;
+            justify-content: center;
             background-color: transparent;
             padding: 0;
             border-radius: 25px;
@@ -168,6 +169,7 @@
         #mute-button {
             padding: clamp(8px, 2.5vw, 10px) clamp(20px, 5vw, 25px);
             font-size: clamp(0.9rem, 3.5vw, 1rem);
+            margin: 0 auto;
             color: #FFFFFF;
             background-color: #FF007A;
             border: 2px solid #FF007A;
