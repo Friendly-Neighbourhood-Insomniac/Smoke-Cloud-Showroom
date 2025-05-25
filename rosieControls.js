@@ -19,6 +19,7 @@ class PlayerController {
     this.canJump = true;
     this.keys = {};
     this.cameraMode = 'third-person';
+    this.joystickInput = { x: 0, y: 0 }; // Add joystick input state
 
     // Setup input handlers
     this.setupInput();
@@ -32,6 +33,12 @@ class PlayerController {
     document.addEventListener('keyup', (e) => {
       this.keys[e.code] = false;
     });
+  }
+
+  // Add method to update joystick input
+  setJoystickInput(x, y) {
+    this.joystickInput.x = x;
+    this.joystickInput.y = y;
   }
 
   setCameraMode(mode) {
@@ -62,6 +69,7 @@ class PlayerController {
     const right = new THREE.Vector3(1, 0, 0).applyAxisAngle(new THREE.Vector3(0, 1, 0), cameraRotation);
     const currentMoveSpeed = this.moveSpeed;
 
+    // Handle keyboard input
     if (this.keys['KeyW']) {
       moveX += forward.x;
       moveZ += forward.z;
@@ -77,6 +85,12 @@ class PlayerController {
     if (this.keys['KeyD']) {
       moveX += right.x;
       moveZ += right.z;
+    }
+
+    // Handle joystick input
+    if (this.joystickInput.y !== 0 || this.joystickInput.x !== 0) {
+      moveX += forward.x * this.joystickInput.y + right.x * this.joystickInput.x;
+      moveZ += forward.z * this.joystickInput.y + right.z * this.joystickInput.x;
     }
 
     const moveDirection = new THREE.Vector3(moveX, 0, moveZ);
