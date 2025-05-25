@@ -1,0 +1,300 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+    <title>3D Virtual Showroom</title>
+
+    <style>
+        body { margin: 0; overflow: hidden; background-color: #000; color: white; font-family: Arial, sans-serif; }
+        canvas { display: block; }
+        #interaction-prompt {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            padding: 15px 25px;
+            background-color: rgba(20, 20, 35, 0.9);
+            border-radius: 10px;
+            font-size: clamp(0.9rem, 4vw, 1.1rem);
+            display: none;
+            text-align: center;
+            color: #FFFFFF;
+            font-weight: bold;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            border: 2px solid #FF007A;
+            box-shadow: 0 0 20px rgba(255, 0, 122, 0.5);
+            z-index: 90;
+            max-width: 90vw;
+        }
+        #info-panel {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            width: clamp(280px, 90vw, 600px);
+            max-height: 90vh;
+            background-color: rgba(10, 10, 20, 0.85);
+            border: 1px solid rgba(180, 180, 220, 0.6);
+            border-radius: 15px;
+            padding: 15px;
+            box-shadow: 0 0 30px rgba(0,0,0,0.7);
+            display: none;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            z-index: 100;
+            color: #e0e0ff;
+        }
+        #info-panel h2 {
+            display: none;
+            margin-top: 0;
+            color: #c0c0ff;
+            border-bottom: 1px solid #7070a0;
+            padding-bottom: 10px;
+            width: 100%;
+            text-align: center;
+            font-size: clamp(1.2rem, 5vw, 1.5rem);
+        }
+        #info-panel-content {
+            width: 100%;
+            max-width: clamp(260px, 85vw, 400px);
+            max-height: calc(90vh - 60px);
+            overflow: hidden;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+        #info-panel-content img {
+            display: block;
+            max-width: 100%;
+            max-height: 100%;
+            object-fit: contain;
+            border-radius: 8px;
+        }
+        #info-panel-content p {
+            display: none;
+            line-height: 1.6;
+            margin-bottom: 15px;
+            font-size: clamp(0.9rem, 4vw, 1rem);
+        }
+        #info-panel-close {
+            position: absolute;
+            top: 10px;
+            right: 10px;
+            background: rgba(0,0,0,0.3);
+            border: 1px solid rgba(255,255,255,0.2);
+            border-radius: 50%;
+            width: clamp(30px, 8vw, 40px);
+            height: clamp(30px, 8vw, 40px);
+            color: #c0c0ff;
+            font-size: clamp(20px, 5vw, 24px);
+            line-height: 28px;
+            text-align: center;
+            cursor: pointer;
+            font-weight: bold;
+            transition: background-color 0.2s, color 0.2s;
+        }
+        #info-panel-close:hover {
+            background-color: rgba(255,0,0,0.7);
+            color: #ffffff;
+        }
+        #welcome-screen {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100vw;
+            height: 100vh;
+            background-color: rgba(0, 0, 0, 0.95);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            z-index: 200;
+            text-align: center;
+            transition: opacity 0.5s ease-out;
+        }
+        #welcome-screen img {
+            max-width: 90%;
+            max-height: 70vh;
+            object-fit: contain;
+            margin-bottom: 20px;
+            border-radius: 10px;
+        }
+        #loading-progress {
+            color: #FFFFFF;
+            font-size: clamp(0.9rem, 4vw, 1rem);
+            margin-bottom: 20px;
+            transition: opacity 0.3s ease-out;
+        }
+        #start-experience-button {
+            padding: clamp(10px, 3vw, 12px) clamp(20px, 5vw, 28px);
+            font-size: clamp(1rem, 4vw, 1.15rem);
+            color: #FFFFFF;
+            background-color: #FF007A;
+            border: 2px solid #FF007A;
+            border-radius: 25px;
+            cursor: pointer;
+            box-shadow: 0 3px 6px rgba(0,0,0,0.2);
+            transition: background-color 0.2s, transform 0.15s, box-shadow 0.2s, opacity 0.3s ease-out;
+            font-weight: bold;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+        #start-experience-button:disabled {
+            background-color: #555;
+            border-color: #555;
+            cursor: not-allowed;
+            opacity: 0.7;
+        }
+        #start-experience-button:not(:disabled):hover {
+            background-color: #E6006E;
+            transform: translateY(-1px);
+            box-shadow: 0 5px 10px rgba(0,0,0,0.3);
+        }
+        #audio-controls {
+            position: absolute;
+            top: 20px;
+            left: 50%;
+            transform: translateX(-50%);
+            display: flex;
+            align-items: center;
+            background-color: transparent;
+            padding: 0;
+            border-radius: 25px;
+            z-index: 150;
+        }
+        #mute-button {
+            padding: clamp(8px, 2.5vw, 10px) clamp(20px, 5vw, 25px);
+            font-size: clamp(0.9rem, 3.5vw, 1rem);
+            color: #FFFFFF;
+            background-color: #FF007A;
+            border: 2px solid #FF007A;
+            border-radius: 25px;
+            cursor: pointer;
+            transition: background-color 0.2s, transform 0.15s, box-shadow 0.2s;
+            font-weight: bold;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.15);
+        }
+        #mute-button:hover {
+            background-color: #E6006E;
+            transform: translateY(-1px);
+            box-shadow: 0 4px 8px rgba(0,0,0,0.2);
+        }
+        #mute-button.muted {
+            background-color: #8c0043;
+            border-color: #8c0043;
+        }
+        #mute-button.muted:hover {
+            background-color: #730037;
+            transform: translateY(-1px);
+            box-shadow: 0 4px 8px rgba(0,0,0,0.2);
+        }
+        
+        /* Touch controls overlay */
+        #touch-controls {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            z-index: 80;
+            display: none;
+        }
+        
+        #touch-camera-area {
+            position: absolute;
+            top: 0;
+            right: 0;
+            width: 50%;
+            height: 100%;
+            pointer-events: auto;
+        }
+
+        /* Mobile interaction button */
+        #mobile-interact-button {
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            width: 60px;
+            height: 60px;
+            background-color: #FF007A;
+            border: none;
+            border-radius: 50%;
+            color: white;
+            font-size: 24px;
+            display: none;
+            justify-content: center;
+            align-items: center;
+            cursor: pointer;
+            z-index: 85;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.3);
+        }
+
+        @media (max-width: 768px) {
+            #interaction-prompt {
+                font-size: 0.9rem;
+                padding: 12px 20px;
+            }
+            
+            #info-panel {
+                width: 85vw;
+            }
+            
+            #welcome-screen img {
+                max-height: 60vh;
+            }
+        }
+
+        @media (orientation: landscape) and (max-height: 500px) {
+            #welcome-screen {
+                flex-direction: row;
+                padding: 20px;
+            }
+            
+            #welcome-screen img {
+                max-width: 50%;
+                margin-bottom: 0;
+                margin-right: 20px;
+            }
+        }
+    </style>
+    <script type="importmap">
+    {
+        "imports": {
+            "three": "https://esm.sh/three@0.160.0?dev",
+            "three/": "https://esm.sh/three@0.160.0&dev/",
+            "three/addons/loaders/GLTFLoader.js": "https://esm.sh/three@0.160.0/examples/jsm/loaders/GLTFLoader.js?dev",
+            "three/addons/geometries/TextGeometry.js": "https://esm.sh/three@0.160.0/examples/jsm/geometries/TextGeometry.js?dev",
+            "three/addons/loaders/FontLoader.js": "https://esm.sh/three@0.160.0/examples/jsm/loaders/FontLoader.js?dev"
+        }
+    }
+    </script>
+  <script type="module" crossorigin src="/assets/index-CFinxYzV.js"></script>
+</head>
+<body>
+    <div id="welcome-screen">
+        <img src="https://play.rosebud.ai/assets/Welcome UI.png?P0hR" alt="Welcome to the Showroom" />
+        <div id="loading-progress">Loading 0%</div>
+        <button id="start-experience-button" disabled>Start Experience</button>
+        <p id="control-instructions-text" style="color: #cccccc; font-size: 0.9em; margin-top: 15px; padding: 0 20px;"></p>
+    </div>
+    <div id="interaction-prompt"></div>
+    <div id="info-panel">
+        <button id="info-panel-close">&times;</button>
+        <h2 id="info-panel-title">Object Title</h2>
+        <p id="info-panel-content">Detailed information about the object will appear here.</p>
+    </div>
+    <div id="audio-controls">
+        <button id="mute-button">Mute</button>
+    </div>
+    <div id="touch-controls">
+        <div id="touch-camera-area"></div>
+    </div>
+    <button id="mobile-interact-button">E</button>
+</body>
+</html>
