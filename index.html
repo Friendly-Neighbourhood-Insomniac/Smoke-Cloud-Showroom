@@ -1,0 +1,233 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>3D Virtual Showroom</title>
+    <script type="importmap">
+    {
+        "imports": {
+            "three": "https://esm.sh/three@0.160.0?dev",
+            "three/": "https://esm.sh/three@0.160.0&dev/",
+            "three/addons/loaders/GLTFLoader.js": "https://esm.sh/three@0.160.0/examples/jsm/loaders/GLTFLoader.js?dev",
+            "three/addons/geometries/TextGeometry.js": "https://esm.sh/three@0.160.0/examples/jsm/geometries/TextGeometry.js?dev",
+            "three/addons/loaders/FontLoader.js": "https://esm.sh/three@0.160.0/examples/jsm/loaders/FontLoader.js?dev",
+            "rosieControls": "./rosieControls.js"
+        }
+    }
+    </script>
+    <style>
+        body { margin: 0; overflow: hidden; background-color: #000; color: white; font-family: Arial, sans-serif; }
+        canvas { display: block; }
+        #interaction-prompt {
+            position: absolute;
+            top: 50%; /* Center vertically */
+            left: 50%; /* Center horizontally */
+            transform: translate(-50%, -50%); /* Precise centering */
+            padding: 15px 25px; /* Increased padding */
+            background-color: rgba(20, 20, 35, 0.9); /* Dark, themed, semi-transparent background */
+            border-radius: 10px; /* Softer corners */
+            font-size: 1.1em; /* Larger font size */
+            display: none; /* Hidden by default */
+            text-align: center;
+            color: #FFFFFF; /* White text */
+            font-weight: bold; /* Bold text */
+            text-transform: uppercase; /* Uppercase text */
+            letter-spacing: 1px; /* Letter spacing */
+            border: 2px solid #FF007A; /* Vibrant pink border */
+            box-shadow: 0 0 20px rgba(255, 0, 122, 0.5); /* Pink glow shadow */
+            z-index: 90; /* Ensure it's above scene but below info panel/welcome screen */
+        }
+        #info-panel {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            width: auto; /* Adjust width to content */
+            max-width: 90vw; /* Max width relative to viewport width */
+            max-height: 90vh; /* Max height relative to viewport height */
+            background-color: rgba(10, 10, 20, 0.85); /* Darker, slightly transparent */
+            border: 1px solid rgba(180, 180, 220, 0.6); /* Lighter border */
+            border-radius: 15px; /* More pronounced rounding */
+            padding: 15px; /* Reduced padding as image will have its own spacing */
+            box-shadow: 0 0 30px rgba(0,0,0,0.7);
+            display: none; /* Hidden by default, will be flex when shown */
+            flex-direction: column; /* Stack close button and content */
+            align-items: center; /* Center image horizontally */
+            justify-content: center; /* Center image vertically */
+            z-index: 100;
+            color: #e0e0ff;
+        }
+        #info-panel h2 { /* Will be hidden when showing card image */
+            display: none; 
+            margin-top: 0;
+            color: #c0c0ff;
+            border-bottom: 1px solid #7070a0;
+            padding-bottom: 10px;
+            width: 100%;
+            text-align: center;
+        }
+        #info-panel-content { /* This div will hold the image */
+            width: 100%;
+            max-width: 400px; /* Max width for the card image itself */
+            max-height: calc(90vh - 60px); /* Account for padding and close button */
+            overflow: hidden; /* Ensure image fits */
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+        #info-panel-content img {
+            display: block;
+            max-width: 100%;
+            max-height: 100%; /* Ensure image scales down to fit */
+            object-fit: contain; /* Scale image to fit while maintaining aspect ratio */
+            border-radius: 8px; /* If the card images themselves don't have rounded corners */
+        }
+        /* Ensure the text paragraph is hidden when image is shown */
+        #info-panel-content p { 
+            display: none;
+            line-height: 1.6;
+            margin-bottom: 15px;
+        }
+        #info-panel-close {
+            position: absolute; /* Keep absolute for corner placement */
+            top: 10px; /* Adjust position slightly */
+            right: 10px; /* Adjust position slightly */
+            background: rgba(0,0,0,0.3); /* Slight background for visibility */
+            border: 1px solid rgba(255,255,255,0.2);
+            border-radius: 50%; /* Make it circular */
+            width: 30px; /* Fixed size */
+            height: 30px; /* Fixed size */
+            color: #c0c0ff;
+            font-size: 20px; /* Adjust font size for new button size */
+            line-height: 28px; /* Center the 'x' */
+            text-align: center;
+            cursor: pointer;
+            font-weight: bold;
+            transition: background-color 0.2s, color 0.2s;
+        }
+        #info-panel-close:hover {
+            background-color: rgba(255,0,0,0.7);
+            color: #ffffff;
+        }
+        #welcome-screen {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100vw;
+            height: 100vh;
+            background-color: rgba(0, 0, 0, 0.95); /* Dark overlay */
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            z-index: 200;
+            text-align: center;
+            transition: opacity 0.5s ease-out;
+        }
+        #welcome-screen img {
+            max-width: 90%;
+            max-height: 70vh; /* Adjust as needed */
+            object-fit: contain;
+            margin-bottom: 20px; /* Space between image and progress */
+            border-radius: 10px; /* Optional: if image asset isn't pre-rounded */
+        }
+        #loading-progress {
+            color: #FFFFFF;
+            font-size: 1em;
+            margin-bottom: 20px;
+            transition: opacity 0.3s ease-out;
+        }
+        #start-experience-button {
+            padding: 12px 28px; /* Slightly adjusted padding */
+            font-size: 1.15em; /* Slightly adjusted font size */
+            color: #FFFFFF; /* White text */
+            background-color: #FF007A; /* Vibrant pink from UI */
+            border: 2px solid #FF007A; /* Border matching background */
+            border-radius: 25px; /* Pill shape to match UI elements */
+            cursor: pointer;
+            box-shadow: 0 3px 6px rgba(0,0,0,0.2); /* Softer shadow */
+            transition: background-color 0.2s, transform 0.15s, box-shadow 0.2s, opacity 0.3s ease-out;
+            font-weight: bold; /* Bold text */
+            text-transform: uppercase; /* Uppercase text to match some UI styles */
+            letter-spacing: 1px; /* Slight letter spacing */
+        }
+        #start-experience-button:disabled {
+            background-color: #555;
+            border-color: #555;
+            cursor: not-allowed;
+            opacity: 0.7;
+        }
+        #start-experience-button:not(:disabled):hover {
+            background-color: #E6006E; /* Darker pink on hover */
+            transform: translateY(-1px); /* Subtle lift on hover */
+            box-shadow: 0 5px 10px rgba(0,0,0,0.3); /* Enhanced shadow on hover */
+        }
+        #audio-controls {
+            position: absolute;
+            top: 20px; /* Position from the top */
+            left: 50%; /* Center horizontally */
+            transform: translateX(-50%); /* Adjust for exact centering */
+            display: flex;
+            align-items: center;
+            background-color: transparent; /* Remove background as button will have its own */
+            padding: 0; /* No padding needed for the container */
+            border-radius: 25px; /* Match button's pill shape if desired, or remove */
+            z-index: 150; /* Ensure it's above other content */
+        }
+        #mute-button {
+            padding: 10px 25px; /* Adjusted padding for a balanced look */
+            font-size: 1em; /* Consistent font size */
+            color: #FFFFFF;
+            background-color: #FF007A; /* Vibrant pink, matching start button */
+            border: 2px solid #FF007A; /* Matching border */
+            border-radius: 25px; /* Pill shape */
+            cursor: pointer;
+            /* margin-right: 10px; Removed, as it's the only control and centered */
+            transition: background-color 0.2s, transform 0.15s, box-shadow 0.2s;
+            font-weight: bold;
+            text-transform: uppercase;
+            letter-spacing: 0.5px; /* Slightly less letter spacing than start button */
+            box-shadow: 0 2px 4px rgba(0,0,0,0.15);
+        }
+        #mute-button:hover {
+            background-color: #E6006E; /* Darker pink on hover */
+            transform: translateY(-1px);
+            box-shadow: 0 4px 8px rgba(0,0,0,0.2);
+        }
+        #mute-button.muted {
+            background-color: #8c0043; /* A darker, desaturated pink for muted state */
+            border-color: #8c0043;
+        }
+        #mute-button.muted:hover {
+            background-color: #730037; /* Even darker for muted hover */
+            transform: translateY(-1px);
+            box-shadow: 0 4px 8px rgba(0,0,0,0.2);
+        }
+    </style>
+</head>
+<body>
+    <div id="welcome-screen">
+        <img src="https://play.rosebud.ai/assets/Welcome UI.png?P0hR" alt="Welcome to the Showroom" />
+        <div id="loading-progress">Loading 0%</div>
+        <button id="start-experience-button" disabled>Start Experience</button>
+        <p id="control-instructions-text" style="color: #cccccc; font-size: 0.9em; margin-top: 15px; padding: 0 20px;"></p>
+    </div>
+    <div id="interaction-prompt"></div>
+    <div id="info-panel">
+        <button id="info-panel-close">&times;</button>
+        <h2 id="info-panel-title">Object Title</h2>
+        <p id="info-panel-content">Detailed information about the object will appear here.</p>
+    </div>
+    <div id="audio-controls">
+        <button id="mute-button">Mute</button>
+        <!-- Volume slider can be added here later -->
+    </div>
+    <script type="module" src="main.js"></script>
+    <script src="https://storage.googleapis.com/rosebud_staticfiles/ScriptsLoader-Universal.js"></script>
+    <script src="https://storage.googleapis.com/rosebud_staticfiles/ChatManager.js"></script>
+    <script src="https://storage.googleapis.com/rosebud_staticfiles/ImageGenerator.js"></script>
+    <script src="https://storage.googleapis.com/rosebud_staticfiles/ProgressLogger.js"></script>
+    <script src="https://storage.googleapis.com/rosebud_staticfiles/OGP.js"></script>
+</body>
+</html>
