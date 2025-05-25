@@ -139,6 +139,47 @@ export class Game {
         });
     }
 
+    setupStreetLamps() {
+        // Basic implementation of street lamps
+        const lampHeight = 4;
+        const lampPositions = [
+            new THREE.Vector3(-5, 0, -5),
+            new THREE.Vector3(5, 0, -5),
+            new THREE.Vector3(-5, 0, 5),
+            new THREE.Vector3(5, 0, 5)
+        ];
+
+        lampPositions.forEach(position => {
+            // Create lamp post
+            const poleGeometry = new THREE.CylinderGeometry(0.1, 0.1, lampHeight, 8);
+            const poleMaterial = new THREE.MeshStandardMaterial({ color: 0x333333 });
+            const pole = new THREE.Mesh(poleGeometry, poleMaterial);
+            pole.position.copy(position);
+            pole.position.y = lampHeight / 2;
+            pole.castShadow = true;
+            this.scene.add(pole);
+
+            // Create lamp head
+            const headGeometry = new THREE.SphereGeometry(0.3, 16, 16);
+            const headMaterial = new THREE.MeshStandardMaterial({ 
+                color: 0xffffcc,
+                emissive: 0xffffcc,
+                emissiveIntensity: 0.5
+            });
+            const head = new THREE.Mesh(headGeometry, headMaterial);
+            head.position.copy(position);
+            head.position.y = lampHeight - 0.2;
+            this.scene.add(head);
+
+            // Add point light
+            const light = new THREE.PointLight(0xffffcc, 1, 10);
+            light.position.copy(position);
+            light.position.y = lampHeight - 0.2;
+            light.castShadow = true;
+            this.scene.add(light);
+        });
+    }
+
     preloadUICards() {
         // Empty method to fix the TypeError
         // Implementation can be added later if needed
