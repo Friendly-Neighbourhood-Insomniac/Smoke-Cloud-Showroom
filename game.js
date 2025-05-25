@@ -130,11 +130,11 @@ export class Game {
     startExperience() {
         console.log("Experience started!");
         this.experienceStarted = true;
-        if (!this.isMobile || (this.isMobile && this.backgroundMusic && this.backgroundMusic.isPlaying)) {
+        if (!this.isMobile) {
             this.firstPersonController.requestPointerLock();
         }
         
-        if (this.backgroundMusic && this.audioLoaded && (!this.isMobile || !this.backgroundMusic.isPlaying)) {
+        if (this.backgroundMusic && this.audioLoaded && !this.isMobile) {
             this.backgroundMusic.play();
             if (this.backgroundMusic.getVolume() > 0) {
                 this.speakerAnimationActions.forEach(action => {
@@ -429,8 +429,12 @@ export class Game {
     toggleMute(isMuted) {
         if (this.backgroundMusic) {
             if (isMuted) {
+                this.backgroundMusic.pause();
                 this.backgroundMusic.setVolume(0);
             } else {
+                if (!this.backgroundMusic.isPlaying) {
+                    this.backgroundMusic.play();
+                }
                 this.backgroundMusic.setVolume(0.1);
             }
             console.log(`Background music ${isMuted ? 'muted' : 'unmuted'}.`);

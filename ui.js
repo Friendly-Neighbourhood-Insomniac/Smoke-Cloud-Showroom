@@ -52,29 +52,21 @@ export function initWelcomeScreen(callback) {
 export function initAudioControls(callback) {
     toggleMuteCallback = callback;
     if (muteButton) {
+        muteButton.style.position = 'fixed';
+        muteButton.style.top = '20px';
+        muteButton.style.left = '50%';
+        muteButton.style.transform = 'translateX(-50%)';
+        muteButton.style.zIndex = '150';
+
         if (isMobileDevice()) {
             muteButton.textContent = 'Play Music to Enhance Vibes';
             muteButton.classList.add('play-music');
-            muteButton.style.cssText = `
-                position: fixed;
-                bottom: 20px;
-                left: 20px;
-                padding: 12px 20px;
-                background-color: #FF007A;
-                border: 2px solid #FF007A;
-                border-radius: 25px;
-                color: white;
-                font-size: 16px;
-                z-index: 150;
-                display: block;
-            `;
         }
 
         muteButton.addEventListener('click', () => {
             if (isMobileDevice() && muteButton.classList.contains('play-music')) {
                 muteButton.classList.remove('play-music');
                 muteButton.textContent = 'Mute';
-                muteButton.style.cssText = '';
                 isMuted = false;
             } else {
                 isMuted = !isMuted;
@@ -90,7 +82,9 @@ export function initAudioControls(callback) {
 export function setMuteButtonState(muted) {
     isMuted = muted;
     if (muteButton) {
-        muteButton.textContent = isMuted ? 'Unmute' : 'Mute';
+        if (!isMobileDevice() || !muteButton.classList.contains('play-music')) {
+            muteButton.textContent = isMuted ? 'Unmute' : 'Mute';
+        }
         if (isMuted) {
             muteButton.classList.add('muted');
         } else {
