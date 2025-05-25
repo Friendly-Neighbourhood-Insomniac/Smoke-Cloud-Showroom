@@ -129,11 +129,12 @@ export class Game {
 
     startExperience() {
         console.log("Experience started!");
+        this.experienceStarted = true;
         if (!this.isMobile) {
             this.firstPersonController.requestPointerLock();
         }
         
-        if (this.backgroundMusic && !this.backgroundMusic.isPlaying) {
+        if (this.backgroundMusic && this.audioLoaded && !this.backgroundMusic.isPlaying) {
             this.backgroundMusic.play();
             if (this.backgroundMusic.getVolume() > 0) {
                 this.speakerAnimationActions.forEach(action => {
@@ -403,11 +404,18 @@ export class Game {
         const listener = new THREE.AudioListener();
         this.camera.add(listener);
         this.backgroundMusic = new THREE.Audio(listener);
+        this.audioLoaded = false;
 
         this.audioLoader.load('https://play.rosebud.ai/assets/Cloud Drippin.mp3?2fSC', (buffer) => {
             this.backgroundMusic.setBuffer(buffer);
             this.backgroundMusic.setLoop(true);
             this.backgroundMusic.setVolume(0.1);
+            this.audioLoaded = true;
+            
+            // If experience already started, begin playback
+            if (this.experienceStarted && !this.backgroundMusic.isPlaying) {
+                this.backgroundMusic.play();
+            }
             console.log("Background music loaded.");
         },
         (xhr) => {
