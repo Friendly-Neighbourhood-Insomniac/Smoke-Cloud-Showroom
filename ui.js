@@ -119,7 +119,7 @@ export function showWelcomeScreen() {
     if (welcomeScreenElement) {
         const welcomeImage = welcomeScreenElement.querySelector('img');
         if (welcomeImage && isMobileDevice()) {
-            welcomeImage.src = '/assets/mobile-UI.png';
+            welcomeImage.src = '/mobileUI.png';
         }
         welcomeScreenElement.style.opacity = '1';
         welcomeScreenElement.style.display = 'flex';
