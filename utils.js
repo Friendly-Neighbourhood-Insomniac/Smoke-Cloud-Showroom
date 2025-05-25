@@ -1,3 +1,5 @@
+import * as THREE from 'three';
+
 // Device detection utilities
 export function isMobileDevice() {
   const ua = navigator.userAgent.toLowerCase();
@@ -36,7 +38,6 @@ export class VirtualJoystick {
   }
 
   setupElements() {
-    // Create joystick container
     this.element = document.createElement('div');
     this.element.className = 'virtual-joystick';
     this.element.style.cssText = `
@@ -50,9 +51,9 @@ export class VirtualJoystick {
       border-radius: 50%;
       touch-action: none;
       display: none;
+      z-index: 100;
     `;
 
-    // Create joystick knob
     this.knob = document.createElement('div');
     this.knob.className = 'virtual-joystick-knob';
     this.knob.style.cssText = `
@@ -122,14 +123,18 @@ export class VirtualJoystick {
   }
 
   getInput() {
-    if (!this.active || Math.abs(this.delta.x) < this.deadzone && Math.abs(this.delta.y) < this.deadzone) {
-      return { x: 0, y: 0 };
-    }
+    if (!this.active) return { x: 0, y: 0 };
 
-    return {
+    const input = {
       x: this.delta.x / this.maxDistance,
-      y: -this.delta.y / this.maxDistance // Invert Y for game coordinates
+      y: -this.delta.y / this.maxDistance
     };
+
+    // Apply deadzone
+    if (Math.abs(input.x) < this.deadzone) input.x = 0;
+    if (Math.abs(input.y) < this.deadzone) input.y = 0;
+
+    return input;
   }
 
   show() {
