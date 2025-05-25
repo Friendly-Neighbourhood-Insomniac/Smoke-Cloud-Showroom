@@ -123,6 +123,14 @@ export class Game {
         this.camera.lookAt(0, PLAYER_HEIGHT, -1);
     }
 
+    setupInteractiveObjects() {
+        // Initialize interactive objects array if not already initialized
+        if (!this.interactiveObjects) {
+            this.interactiveObjects = [];
+        }
+        console.log('Setting up interactive objects...');
+    }
+
     startExperience() {
         console.log("Experience started!");
         if (!this.isMobile) {
