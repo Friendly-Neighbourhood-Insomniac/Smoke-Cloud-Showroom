@@ -75,12 +75,14 @@ export class Game {
         let lastTouchY = 0;
 
         touchCameraArea.addEventListener('touchstart', (e) => {
+            e.preventDefault(); // Prevent default touch behavior
             const touch = e.touches[0];
             lastTouchX = touch.clientX;
             lastTouchY = touch.clientY;
         });
 
         touchCameraArea.addEventListener('touchmove', (e) => {
+            e.preventDefault(); // Prevent default touch behavior
             if (this.infoPanelActive) return;
             
             const touch = e.touches[0];
@@ -88,8 +90,9 @@ export class Game {
             const deltaY = touch.clientY - lastTouchY;
 
             if (this.firstPersonController) {
-                this.firstPersonController.rotationY -= deltaX * 0.005;
-                this.firstPersonController.rotationX -= deltaY * 0.005;
+                // Increase sensitivity for mobile
+                this.firstPersonController.rotationY -= deltaX * 0.01;
+                this.firstPersonController.rotationX -= deltaY * 0.01;
                 this.firstPersonController.rotationX = Math.max(
                     -Math.PI / 2 + 0.01,
                     Math.min(Math.PI / 2 - 0.01, this.firstPersonController.rotationX)
@@ -98,6 +101,10 @@ export class Game {
 
             lastTouchX = touch.clientX;
             lastTouchY = touch.clientY;
+        });
+
+        touchCameraArea.addEventListener('touchend', (e) => {
+            e.preventDefault(); // Prevent default touch behavior
         });
 
         const mobileInteractButton = document.getElementById('mobile-interact-button');
@@ -109,6 +116,12 @@ export class Game {
         mobileInteractButton.addEventListener('touchend', () => {
             this.keys['KeyE'] = false;
         });
+
+        // Show touch controls container
+        const touchControls = document.getElementById('touch-controls');
+        if (touchControls) {
+            touchControls.style.display = 'block';
+        }
 
         this.joystick.show();
     }
