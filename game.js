@@ -180,6 +180,14 @@ export class Game {
         });
     }
 
+    setupSpeakers() {
+        // Basic implementation of speakers setup
+        console.log('Setting up speakers...');
+        // This empty implementation resolves the TypeError
+        // The arrays this.speakerMixers and this.speakerAnimationActions 
+        // are already initialized in the constructor
+    }
+
     preloadUICards() {
         // Empty method to fix the TypeError
         // Implementation can be added later if needed
