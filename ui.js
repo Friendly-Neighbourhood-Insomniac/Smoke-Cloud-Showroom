@@ -11,7 +11,6 @@ const muteButton = document.getElementById('mute-button');
 const loadingProgressElement = document.getElementById('loading-progress');
 const controlInstructionsTextElement = document.getElementById('control-instructions-text');
 const touchControlsElement = document.getElementById('touch-controls');
-const audioControls = document.getElementById('audio-controls');
 
 let closeInfoPanelCallback = null;
 let startExperienceCallback = null;
@@ -54,25 +53,35 @@ export function initAudioControls(callback) {
     toggleMuteCallback = callback;
     if (muteButton) {
         if (isMobileDevice()) {
-            muteButton.style.display = 'none';
             muteButton.textContent = 'Play Music to Enhance Vibes';
             muteButton.classList.add('play-music');
+            muteButton.style.cssText = `
+                position: fixed;
+                bottom: 20px;
+                left: 20px;
+                padding: 12px 20px;
+                background-color: #FF007A;
+                border: 2px solid #FF007A;
+                border-radius: 25px;
+                color: white;
+                font-size: 16px;
+                z-index: 150;
+                display: block;
+            `;
         }
 
         muteButton.addEventListener('click', () => {
             if (isMobileDevice() && muteButton.classList.contains('play-music')) {
                 muteButton.classList.remove('play-music');
                 muteButton.textContent = 'Mute';
+                muteButton.style.cssText = '';
                 isMuted = false;
             } else {
-            isMuted = !isMuted;
+                isMuted = !isMuted;
             }
             setMuteButtonState(isMuted);
             if (toggleMuteCallback) {
                 toggleMuteCallback(isMuted);
-            }
-            if (isMobileDevice()) {
-                muteButton.style.display = 'block';
             }
         });
     }
