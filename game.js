@@ -161,7 +161,7 @@ export class Game {
         this.player.rotation.y = Math.PI;
         this.scene.add(this.player);
 
-        this.playerController = new PlayerController(this.player, {
+        this.playerController = new PlayerController(this.player, this.keys, {
             moveSpeed: 5,
             jumpForce: 8,
             gravity: 25,
