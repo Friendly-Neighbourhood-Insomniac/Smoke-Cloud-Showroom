@@ -4,8 +4,9 @@ import * as THREE from 'three';
  * PlayerController - Handles player movement and physics
  */
 class PlayerController {
-  constructor(player, options = {}) {
+  constructor(player, sharedKeys, options = {}) {
     this.player = player;
+    this.keys = sharedKeys;
 
     // Configuration
     this.moveSpeed = options.moveSpeed || 10;
@@ -17,21 +18,7 @@ class PlayerController {
     this.velocity = new THREE.Vector3();
     this.isOnGround = true;
     this.canJump = true;
-    this.keys = {};
     this.cameraMode = 'third-person';
-
-    // Setup input handlers
-    this.setupInput();
-  }
-
-  setupInput() {
-    document.addEventListener('keydown', (e) => {
-      this.keys[e.code] = true;
-    });
-
-    document.addEventListener('keyup', (e) => {
-      this.keys[e.code] = false;
-    });
   }
 
   setCameraMode(mode) {
