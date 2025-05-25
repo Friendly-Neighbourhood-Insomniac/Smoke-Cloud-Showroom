@@ -188,6 +188,22 @@ export class Game {
         // are already initialized in the constructor
     }
 
+    setupBackgroundMusic() {
+        // Create an audio listener and add it to the camera
+        const listener = new THREE.AudioListener();
+        this.camera.add(listener);
+
+        // Create a global audio source
+        this.backgroundMusic = new THREE.Audio(listener);
+
+        // Load a sound and set it as the Audio object's buffer
+        this.audioLoader.load('/path/to/background-music.mp3', (buffer) => {
+            this.backgroundMusic.setBuffer(buffer);
+            this.backgroundMusic.setLoop(true);
+            this.backgroundMusic.setVolume(0.5);
+        });
+    }
+
     preloadUICards() {
         // Empty method to fix the TypeError
         // Implementation can be added later if needed
