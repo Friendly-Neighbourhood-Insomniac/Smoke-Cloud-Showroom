@@ -2,7 +2,7 @@ import * as THREE from 'three';
 import { GLTFLoader } from 'three/addons/loaders/GLTFLoader.js';
 import { TextGeometry } from 'three/addons/geometries/TextGeometry.js';
 import { FontLoader } from 'three/addons/loaders/FontLoader.js';
-import { PlayerController, FirstPersonCameraController } from 'rosieControls';
+import { PlayerController, FirstPersonCameraController } from './rosieControls.js';
 import { setupSceneLighting } from './sceneSetup.js';
 import { Showroom } from './showroom.js';
 import { createInteractiveObject } from './interactiveObject.js';
