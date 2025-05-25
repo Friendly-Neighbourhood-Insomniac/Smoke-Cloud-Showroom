@@ -103,6 +103,26 @@ export class Game {
         setupSceneLighting(this.scene);
     }
 
+    setupPlayerAndControls() {
+        // Create player controller
+        this.playerController = new PlayerController(
+            this.scene,
+            new THREE.Vector3(0, PLAYER_HEIGHT, 0),
+            PLAYER_RADIUS
+        );
+
+        // Set up first person camera controller
+        this.firstPersonController = new FirstPersonCameraController(
+            this.camera,
+            this.playerController,
+            this.renderer.domElement
+        );
+
+        // Set initial camera position
+        this.camera.position.set(0, PLAYER_HEIGHT, 0);
+        this.camera.lookAt(0, PLAYER_HEIGHT, -1);
+    }
+
     startExperience() {
         console.log("Experience started!");
         if (!this.isMobile) {
