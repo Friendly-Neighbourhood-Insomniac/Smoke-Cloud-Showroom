@@ -131,6 +131,11 @@ export class Game {
         console.log('Setting up interactive objects...');
     }
 
+    preloadUICards() {
+        // Empty method to fix the TypeError
+        // Implementation can be added later if needed
+    }
+
     startExperience() {
         console.log("Experience started!");
         if (!this.isMobile) {
