@@ -83,6 +83,26 @@ export class Game {
         document.addEventListener('keyup', (e) => { this.keys[e.code] = false; });
     }
 
+    setupEnvironment() {
+        // Set up basic environment
+        this.scene.background = new THREE.Color(0x000000);
+        
+        // Add ground plane
+        const groundGeometry = new THREE.PlaneGeometry(100, 100);
+        const groundMaterial = new THREE.MeshStandardMaterial({ 
+            color: 0x808080,
+            roughness: 0.8,
+            metalness: 0.2
+        });
+        const ground = new THREE.Mesh(groundGeometry, groundMaterial);
+        ground.rotation.x = -Math.PI / 2;
+        ground.receiveShadow = true;
+        this.scene.add(ground);
+
+        // Setup scene lighting
+        setupSceneLighting(this.scene);
+    }
+
     startExperience() {
         console.log("Experience started!");
         if (!this.isMobile) {
