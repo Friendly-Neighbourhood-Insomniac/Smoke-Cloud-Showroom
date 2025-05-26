@@ -121,8 +121,8 @@ export function disableStartButton() {
 export function showWelcomeScreen() {
     if (welcomeScreenElement) {
         const welcomeImage = welcomeScreenElement.querySelector('img');
-        if (welcomeImage && isMobileDevice()) {
-            welcomeImage.src = '/mobileUI.png';
+        if (welcomeImage) {
+            welcomeImage.src = isMobileDevice() ? '/mobileUI.png' : '/Welcome-UI-PC.png';
         }
         welcomeScreenElement.style.opacity = '1';
         welcomeScreenElement.style.display = 'flex';
